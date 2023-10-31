@@ -35,7 +35,8 @@ func IsValidToken(r rune) bool {
 // SplitExpressions splits hostlist expression separated by ',' and returns a list of hostlist expressions
 //
 // For example:
-//	 `host-[001-003],node-[3,4,5-10]` will be converted to `["host-[001-003]","node-[3,4,5-10]"]`
+//
+//	`host-[001-003],node-[3,4,5-10]` will be converted to `["host-[001-003]","node-[3,4,5-10]"]`
 func SplitExpressions(hostlist string) ([]string, error) {
 	expressions := []string{}
 
@@ -86,9 +87,9 @@ var rangeExprRegex = regexp.MustCompile(`^(?P<start>\d+)\-(?P<end>\d+)$`)
 // ExpandRangeExpression expand a range expression and return an array of hostnames of that expression
 //
 // For example:
-//	 `001-003` will be converted to `["001","002","003"]`
-//   `02-03,a` will be converted to `["02","03","a"]`
 //
+//		 `001-003` will be converted to `["001","002","003"]`
+//	  `02-03,a` will be converted to `["02","03","a"]`
 func ExpandRangeExpression(expression string) ([]string, error) {
 	rangeList := []string{}
 
@@ -104,10 +105,7 @@ func ExpandRangeExpression(expression string) ([]string, error) {
 			// Check if there is leading zeroes
 			leadingZeroes := 0
 			if start[0] == '0' || end[0] == '0' {
-				leadingZeroes = len(start)
-				if len(end) > leadingZeroes {
-					leadingZeroes = len(end)
-				}
+				leadingZeroes = max(len(start), len(end))
 			}
 
 			s, err := strconv.ParseInt(start, 10, 64)
@@ -134,9 +132,9 @@ func ExpandRangeExpression(expression string) ([]string, error) {
 // ExpandExpression expand a single hostlist expression and return an array of hostnames of that expression
 //
 // For example:
-//   `host-[001-003]` will be converted to `["host-001", "host-002", "host-003"]`
-//   `host-1,host-2` will return ErrNotSingleExpression
 //
+//	`host-[001-003]` will be converted to `["host-001", "host-002", "host-003"]`
+//	`host-1,host-2` will return ErrNotSingleExpression
 func ExpandExpression(expression string) ([]string, error) {
 	hosts := []string{}
 	rangeExpr := []string{}
@@ -211,6 +209,7 @@ func ExpandExpression(expression string) ([]string, error) {
 // ExpandHostlist expands hostnames from hostlist expression and return an array of hostnames.
 //
 // For example:
+//
 //	`host-[001-003]` will be converted to `["host-001", "host-002", "host-003"]`
 func ExpandHostlist(expression string) ([]string, error) {
 	hostlist := []string{}
