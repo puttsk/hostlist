@@ -63,7 +63,7 @@ var ExpandHostlistTestcases = []ExpandHostlistTestcase{
 
 // TestExpandHosts calls hostlist.ExpandHosts with hostlist expression, checking
 // for a valid return value.
-func TestExpandHosts(t *testing.T) {
+func TestExpandHostlist(t *testing.T) {
 	for _, c := range ExpandHostlistTestcases {
 		t.Logf("Testcase: %s\n", c.HostlistExpression)
 		hostnames, err := hostlist.ExpandHostlist(c.HostlistExpression)
