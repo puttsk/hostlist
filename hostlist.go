@@ -3,27 +3,11 @@
 package hostlist
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
 )
-
-var ErrEmptyExpression = errors.New("expression cannot be empty string")
-var ErrNestedRangeExpression = errors.New("range expression cannot be nested")
-var ErrExpectedCloseBracket = errors.New("cannot find matching ']'")
-var ErrNotSingleExpression = errors.New("more than single expression detected")
-var ErrInvalidRange = errors.New("end value must be greater than start")
-
-type ErrInvalidToken struct {
-	Token    rune
-	Position int
-}
-
-func (e ErrInvalidToken) Error() string {
-	return fmt.Sprintf("invalid character '%c' at position %d", e.Token, e.Position)
-}
 
 // IsValidToken checks if rune is a valid for using in hostlist expression
 func IsValidToken(r rune) bool {
@@ -33,7 +17,8 @@ func IsValidToken(r rune) bool {
 		r == ',' || r == '[' || r == ']' || r == '-' || r == '_' || r == '.'
 }
 
-// SplitExpressions splits hostlist expression separated by ',' and returns a list of hostlist expressions
+// SplitExpressions splits a string containing hostlist expressions and
+// returns an array of hostlist expressions
 //
 // For example:
 //
@@ -134,13 +119,13 @@ func ExpandRangeExpression(expression string) ([]string, error) {
 	return rangeList, nil
 }
 
-// ExpandExpression expand a single hostlist expression and return an array of hostnames of that expression
+// ExpandSingleExpression expand a single hostlist expression and return an array of hostnames of that expression
 //
 // For example:
 //
 //	`host-[001-003]` will be converted to `["host-001", "host-002", "host-003"]`
 //	`host-1,host-2` will return ErrNotSingleExpression
-func ExpandExpression(expression string) ([]string, error) {
+func ExpandSingleExpression(expression string) ([]string, error) {
 	if expression == "" {
 		return nil, ErrEmptyExpression
 	}
@@ -242,7 +227,7 @@ func ExpandHostlist(expression string) ([]string, error) {
 	}
 
 	for _, expr := range expressions {
-		hosts, err := ExpandExpression(expr)
+		hosts, err := ExpandSingleExpression(expr)
 		if err != nil {
 			return nil, err
 		}

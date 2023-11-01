@@ -81,7 +81,7 @@ func TestExpandRangeExpression(t *testing.T) {
 	}
 }
 
-var ExpandExpressionTestcases = []ExpandHostlistTestcase{
+var ExpandSingleExpressionTestcases = []ExpandHostlistTestcase{
 	{
 		HostlistExpression: "",
 		ExpectedResult:     nil,
@@ -154,12 +154,12 @@ var ExpandExpressionTestcases = []ExpandHostlistTestcase{
 	},
 }
 
-// TestExpandExpression calls hostlist.ExpandExpression with hostlist expression, checking
+// TestExpandExpression calls hostlist.ExpandSingleExpression with hostlist expression, checking
 // for a valid return value.
-func TestExpandExpression(t *testing.T) {
-	for _, c := range ExpandExpressionTestcases {
+func TestExpandSingleExpression(t *testing.T) {
+	for _, c := range ExpandSingleExpressionTestcases {
 		t.Logf("Testcase: %s\n", c.HostlistExpression)
-		hostnames, err := hostlist.ExpandExpression(c.HostlistExpression)
+		hostnames, err := hostlist.ExpandSingleExpression(c.HostlistExpression)
 		if err != c.ExpectedError {
 			t.Fatalf("Invalid error: actual: %s expected: %s", err, c.ExpectedError)
 		}
