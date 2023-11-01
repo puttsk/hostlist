@@ -18,6 +18,18 @@ type CartesianProductTestcase struct {
 
 var CartesianProductTestcases = []CartesianProductTestcase{
 	{
+		InputList:      nil,
+		ExpectedResult: [][]any{},
+	},
+	{
+		InputList:      [][]any{},
+		ExpectedResult: [][]any{},
+	},
+	{
+		InputList:      [][]any{{1, 2, 3, 4}},
+		ExpectedResult: [][]any{{1}, {2}, {3}, {4}},
+	},
+	{
 		InputList:      [][]any{{1, 2}, {3, 4}},
 		ExpectedResult: [][]any{{1, 3}, {1, 4}, {2, 3}, {2, 4}},
 	},
@@ -38,18 +50,20 @@ func TestCartesianProduct(t *testing.T) {
 		t.Logf("Testcase: %+v\n", c.InputList)
 		product := hostlist.CartesianProduct(c.InputList)
 		if !reflect.DeepEqual(product, c.ExpectedResult) {
-			t.Fatalf("Invalid hostnames: actual: %+v expect: %+v", product, c.ExpectedResult)
+			t.Fatalf("Invalid product: actual: %+v expect: %+v", product, c.ExpectedResult)
 		}
 	}
 }
 
 var CartesianProductBenchmarks = [][][]int{
-	{rand.Perm(2), rand.Perm(2)},
-	{rand.Perm(100), rand.Perm(100)},
+	{rand.Perm(10), rand.Perm(10)},
 	{rand.Perm(10), rand.Perm(10), rand.Perm(10)},
-	{rand.Perm(100), rand.Perm(100), rand.Perm(100)},
 	{rand.Perm(10), rand.Perm(10), rand.Perm(10), rand.Perm(10)},
+	{rand.Perm(100), rand.Perm(100)},
+	{rand.Perm(100), rand.Perm(100), rand.Perm(100)},
 	{rand.Perm(100), rand.Perm(100), rand.Perm(100), rand.Perm(100)},
+	{rand.Perm(1000), rand.Perm(1000)},
+	{rand.Perm(10000), rand.Perm(10000)},
 }
 
 func BenchmarkCartesianProduct(t *testing.B) {
