@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-var ErrEmptyExpression = errors.New("hostlist expression cannot be empty string")
+var ErrEmptyExpression = errors.New("expression cannot be empty string")
 var ErrNestedRangeExpression = errors.New("range expression cannot be nested")
 var ErrExpectedCloseBracket = errors.New("cannot find matching ']'")
 var ErrNotSingleExpression = errors.New("more than single expression detected")
@@ -22,7 +22,7 @@ type ErrInvalidToken struct {
 }
 
 func (e ErrInvalidToken) Error() string {
-	return fmt.Sprintf("invalid bracket '%c' at position %d", e.Token, e.Position)
+	return fmt.Sprintf("invalid character '%c' at position %d", e.Token, e.Position)
 }
 
 // IsValidToken checks if rune is a valid for using in hostlist expression
@@ -30,7 +30,7 @@ func IsValidToken(r rune) bool {
 	return (r >= 'a' && r <= 'z') ||
 		(r >= 'A' && r <= 'Z') ||
 		(r >= '0' && r <= '9') ||
-		r == ',' || r == '[' || r == ']' || r == '-'
+		r == ',' || r == '[' || r == ']' || r == '-' || r == '_' || r == '.'
 }
 
 // SplitExpressions splits hostlist expression separated by ',' and returns a list of hostlist expressions
@@ -89,9 +89,13 @@ var rangeExprRegex = regexp.MustCompile(`^(?P<start>\d+)\-(?P<end>\d+)$`)
 //
 // For example:
 //
-//		 `001-003` will be converted to `["001","002","003"]`
-//	  `02-03,a` will be converted to `["02","03","a"]`
+//	`001-003` will be converted to `["001","002","003"]`
+//	`02-03,a` will be converted to `["02","03","a"]`
 func ExpandRangeExpression(expression string) ([]string, error) {
+	if expression == "" {
+		return nil, ErrEmptyExpression
+	}
+
 	rangeList := []string{}
 
 	for _, expr := range strings.Split(expression, ",") {
@@ -137,6 +141,10 @@ func ExpandRangeExpression(expression string) ([]string, error) {
 //	`host-[001-003]` will be converted to `["host-001", "host-002", "host-003"]`
 //	`host-1,host-2` will return ErrNotSingleExpression
 func ExpandExpression(expression string) ([]string, error) {
+	if expression == "" {
+		return nil, ErrEmptyExpression
+	}
+
 	hosts := []string{}
 	rangeExpr := []string{}
 
@@ -183,6 +191,11 @@ func ExpandExpression(expression string) ([]string, error) {
 		} else {
 			rangeBuilder.WriteRune(s)
 		}
+	}
+
+	// Check if all brackets are closed
+	if bracket > 0 {
+		return nil, ErrExpectedCloseBracket
 	}
 
 	if len(rangeExpr) > 0 {
