@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+var ErrEmptyExpression = errors.New("hostlist expression cannot be empty string")
 var ErrNestedRangeExpression = errors.New("range expression cannot be nested")
 var ErrExpectedCloseBracket = errors.New("cannot find matching ']'")
 var ErrNotSingleExpression = errors.New("more than single expression detected")
@@ -184,23 +185,27 @@ func ExpandExpression(expression string) ([]string, error) {
 		}
 	}
 
-	rList := [][]interface{}{}
-	for _, expr := range rangeExpr {
-		r, err := ExpandRangeExpression(expr)
-		if err != nil {
-			return nil, err
+	if len(rangeExpr) > 0 {
+		rList := [][]interface{}{}
+		for _, expr := range rangeExpr {
+			r, err := ExpandRangeExpression(expr)
+			if err != nil {
+				return nil, err
+			}
+			p := make([]interface{}, len(r))
+			for i := range r {
+				p[i] = r[i]
+			}
+			rList = append(rList, p)
 		}
-		p := make([]interface{}, len(r))
-		for i := range r {
-			p[i] = r[i]
-		}
-		rList = append(rList, p)
-	}
 
-	hostFormat := prefixBuilder.String()
-	rProduct := CartesianProduct(rList)
-	for _, r := range rProduct {
-		hosts = append(hosts, fmt.Sprintf(hostFormat, r...))
+		hostFormat := prefixBuilder.String()
+		rProduct := CartesianProduct(rList)
+		for _, r := range rProduct {
+			hosts = append(hosts, fmt.Sprintf(hostFormat, r...))
+		}
+	} else {
+		hosts = append(hosts, prefixBuilder.String())
 	}
 
 	return hosts, nil
@@ -213,6 +218,10 @@ func ExpandExpression(expression string) ([]string, error) {
 //	`host-[001-003]` will be converted to `["host-001", "host-002", "host-003"]`
 func ExpandHostlist(expression string) ([]string, error) {
 	hostlist := []string{}
+
+	if expression == "" {
+		return nil, ErrEmptyExpression
+	}
 
 	expressions, err := SplitExpressions(expression)
 	if err != nil {

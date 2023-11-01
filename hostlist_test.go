@@ -15,6 +15,16 @@ type ExpandHostlistTestcase struct {
 
 var ExpandHostlistTestcases = []ExpandHostlistTestcase{
 	{
+		HostlistExpression: "",
+		ExpectedResult:     nil,
+		ExpectedError:      hostlist.ErrEmptyExpression,
+	},
+	{
+		HostlistExpression: "host1",
+		ExpectedResult:     []string{"host1"},
+		ExpectedError:      nil,
+	},
+	{
 		HostlistExpression: "host-[1-4]",
 		ExpectedResult:     []string{"host-1", "host-2", "host-3", "host-4"},
 		ExpectedError:      nil,
@@ -25,8 +35,18 @@ var ExpandHostlistTestcases = []ExpandHostlistTestcase{
 		ExpectedError:      nil,
 	},
 	{
+		HostlistExpression: "host-[001-004,a],host2-[08-11]",
+		ExpectedResult:     []string{"host-001", "host-002", "host-003", "host-004", "host-a", "host2-08", "host2-09", "host2-10", "host2-11"},
+		ExpectedError:      nil,
+	},
+	{
 		HostlistExpression: "p[1-2][3-4]s",
 		ExpectedResult:     []string{"p13s", "p14s", "p23s", "p24s"},
+		ExpectedError:      nil,
+	},
+	{
+		HostlistExpression: "p1,p2,p3",
+		ExpectedResult:     []string{"p1", "p2", "p3"},
 		ExpectedError:      nil,
 	},
 	{
@@ -61,7 +81,7 @@ var ExpandHostlistTestcases = []ExpandHostlistTestcase{
 	},
 }
 
-// TestExpandHosts calls hostlist.ExpandHosts with hostlist expression, checking
+// TestExpandHostlist calls hostlist.ExpandHostlist with hostlist expression, checking
 // for a valid return value.
 func TestExpandHostlist(t *testing.T) {
 	for _, c := range ExpandHostlistTestcases {
