@@ -1,10 +1,10 @@
-package hostlist_test
+package expand_test
 
 import (
 	"reflect"
 	"testing"
 
-	"github.com/puttsk/hostlist"
+	"github.com/puttsk/hostlist/expand"
 )
 
 type ExpandHostlistTestcase struct {
@@ -17,7 +17,7 @@ var ExpandRangeExpressionTestcases = []ExpandHostlistTestcase{
 	{
 		HostlistExpression: "",
 		ExpectedResult:     nil,
-		ExpectedError:      hostlist.ErrEmptyExpression,
+		ExpectedError:      expand.ErrEmptyExpression,
 	},
 	{
 		HostlistExpression: "1",
@@ -57,21 +57,21 @@ var ExpandRangeExpressionTestcases = []ExpandHostlistTestcase{
 	{
 		HostlistExpression: "100-10",
 		ExpectedResult:     nil,
-		ExpectedError:      hostlist.ErrInvalidRange,
+		ExpectedError:      expand.ErrInvalidRange,
 	},
 	{
 		HostlistExpression: "009-011,013,0099-0100,3-1",
 		ExpectedResult:     nil,
-		ExpectedError:      hostlist.ErrInvalidRange,
+		ExpectedError:      expand.ErrInvalidRange,
 	},
 }
 
-// TestExpandRangeExpression calls hostlist.ExpandRangeExpression with range expression, checking
+// TestExpandRangeExpression calls expand.ExpandRangeExpression with range expression, checking
 // for a valid return value.
 func TestExpandRangeExpression(t *testing.T) {
 	for _, c := range ExpandRangeExpressionTestcases {
 		t.Logf("Testcase: %s\n", c.HostlistExpression)
-		rangeList, err := hostlist.ExpandRangeExpression(c.HostlistExpression)
+		rangeList, err := expand.ExpandRangeExpression(c.HostlistExpression)
 		if err != c.ExpectedError {
 			t.Fatalf("Invalid error: actual: %s expected: %s", err, c.ExpectedError)
 		}
@@ -85,7 +85,7 @@ var ExpandSingleExpressionTestcases = []ExpandHostlistTestcase{
 	{
 		HostlistExpression: "",
 		ExpectedResult:     nil,
-		ExpectedError:      hostlist.ErrEmptyExpression,
+		ExpectedError:      expand.ErrEmptyExpression,
 	},
 	{
 		HostlistExpression: "host1",
@@ -130,36 +130,36 @@ var ExpandSingleExpressionTestcases = []ExpandHostlistTestcase{
 	{
 		HostlistExpression: "host-1,host-2",
 		ExpectedResult:     nil,
-		ExpectedError:      hostlist.ErrNotSingleExpression,
+		ExpectedError:      expand.ErrNotSingleExpression,
 	},
 	{
 		HostlistExpression: "host-[ 001-004,a]",
 		ExpectedResult:     nil,
-		ExpectedError:      hostlist.ErrInvalidToken{' ', 7},
+		ExpectedError:      expand.ErrInvalidToken{' ', 7},
 	},
 	{
 		HostlistExpression: "hos]t-[1-4]",
 		ExpectedResult:     nil,
-		ExpectedError:      hostlist.ErrInvalidToken{']', 4},
+		ExpectedError:      expand.ErrInvalidToken{']', 4},
 	},
 	{
 		HostlistExpression: "host-[1-4",
 		ExpectedResult:     nil,
-		ExpectedError:      hostlist.ErrExpectedCloseBracket,
+		ExpectedError:      expand.ErrExpectedCloseBracket,
 	},
 	{
 		HostlistExpression: "host-[1-4[2-5]]",
 		ExpectedResult:     nil,
-		ExpectedError:      hostlist.ErrNestedRangeExpression,
+		ExpectedError:      expand.ErrNestedRangeExpression,
 	},
 }
 
-// TestExpandExpression calls hostlist.ExpandSingleExpression with hostlist expression, checking
+// TestExpandExpression calls expand.ExpandSingleExpression with hostlist expression, checking
 // for a valid return value.
 func TestExpandSingleExpression(t *testing.T) {
 	for _, c := range ExpandSingleExpressionTestcases {
 		t.Logf("Testcase: %s\n", c.HostlistExpression)
-		hostnames, err := hostlist.ExpandSingleExpression(c.HostlistExpression)
+		hostnames, err := expand.ExpandSingleExpression(c.HostlistExpression)
 		if err != c.ExpectedError {
 			t.Fatalf("Invalid error: actual: %s expected: %s", err, c.ExpectedError)
 		}

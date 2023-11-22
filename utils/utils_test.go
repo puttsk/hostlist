@@ -1,4 +1,4 @@
-package hostlist_test
+package utils_test
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/puttsk/hostlist"
+	"github.com/puttsk/hostlist/utils"
 )
 
 type CartesianProductTestcase struct {
@@ -43,12 +43,12 @@ var CartesianProductTestcases = []CartesianProductTestcase{
 	},
 }
 
-// TestExpandHosts calls hostlist.ExpandHosts with hostlist expression, checking
+// TestExpandHosts calls utils.ExpandHosts with hostlist expression, checking
 // for a valid return value.
 func TestCartesianProduct(t *testing.T) {
 	for _, c := range CartesianProductTestcases {
 		t.Logf("Testcase: %+v\n", c.InputList)
-		product := hostlist.CartesianProduct(c.InputList)
+		product := utils.CartesianProduct(c.InputList)
 		if !reflect.DeepEqual(product, c.ExpectedResult) {
 			t.Fatalf("Invalid product: actual: %+v expect: %+v", product, c.ExpectedResult)
 		}
@@ -74,7 +74,7 @@ func BenchmarkCartesianProduct(t *testing.B) {
 		}
 		t.Run(strings.Join(inputSize, "x"), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				hostlist.CartesianProduct(c)
+				utils.CartesianProduct(c)
 			}
 		})
 	}

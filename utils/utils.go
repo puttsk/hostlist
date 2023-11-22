@@ -1,4 +1,4 @@
-package hostlist
+package utils
 
 // CartesianProduct creates a list of Cartesian products from a set of arrays.
 // Returns an empty list if `a` is `nil` or empty list.

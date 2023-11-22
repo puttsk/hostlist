@@ -1,11 +1,11 @@
-package hostlist_test
+package compress_test
 
 import (
 	"slices"
 	"strings"
 	"testing"
 
-	"github.com/puttsk/hostlist"
+	"github.com/puttsk/hostlist/compress"
 )
 
 type CompressHostlistTestcase struct {
@@ -89,7 +89,7 @@ func TestPrintTree(t *testing.T) {
 		t.Logf("Testcase: %s\n", strings.Join(c.Hostlist, ","))
 		slices.Sort(c.Hostlist)
 
-		tree := hostlist.NewHostlistExpressionTree()
+		tree := compress.NewHostlistExpressionTree()
 		for _, h := range c.Hostlist {
 			tree.AddHost(h)
 		}

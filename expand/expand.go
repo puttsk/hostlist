@@ -1,10 +1,12 @@
-package hostlist
+package expand
 
 import (
 	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/puttsk/hostlist/utils"
 )
 
 // IsValidRune checks if rune is a valid for using in hostlist expression
@@ -196,7 +198,7 @@ func ExpandSingleExpression(expression string) ([]string, error) {
 		}
 
 		hostFormat := prefixBuilder.String()
-		rProduct := CartesianProduct(rList)
+		rProduct := utils.CartesianProduct(rList)
 		for _, r := range rProduct {
 			hosts = append(hosts, fmt.Sprintf(hostFormat, r...))
 		}
