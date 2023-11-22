@@ -14,7 +14,7 @@ type CompressHostlistTestcase struct {
 	ExpectedError  error
 }
 
-var PrintTreeTestcases = []CompressHostlistTestcase{
+var PrintNodeTestcases = []CompressHostlistTestcase{
 	{
 		Hostlist:       []string{},
 		ExpectedResult: ``,
@@ -82,10 +82,10 @@ var PrintTreeTestcases = []CompressHostlistTestcase{
 	},
 }
 
-// TestPrintTree tests TokenNode.PrintTree by creating a HostlistExpressionTree without compressing
+// TestPrintNode tests TokenNode.PrintNode by creating a HostlistExpressionTree without compressing
 // and check for return value
-func TestPrintTree(t *testing.T) {
-	for _, c := range PrintTreeTestcases {
+func TestPrintNode(t *testing.T) {
+	for _, c := range PrintNodeTestcases {
 		t.Logf("Testcase: %s\n", strings.Join(c.Hostlist, ","))
 		slices.Sort(c.Hostlist)
 
@@ -94,7 +94,7 @@ func TestPrintTree(t *testing.T) {
 			tree.AddHost(h)
 		}
 
-		result := strings.TrimSpace(tree.Root.PrintTree())
+		result := strings.TrimSpace(tree.Root.PrintNode())
 
 		if result != c.ExpectedResult {
 			t.Fatalf("Invalid tree: actual:\n%x\nexpect:\n%x\n", result, c.ExpectedResult)

@@ -43,5 +43,5 @@ func (t *HostlistExpressionTree) AddHost(host string) {
 }
 
 func (t HostlistExpressionTree) String() string {
-	return t.Root.PrintTree()
+	return t.Root.PrintNode()
 }

@@ -31,9 +31,9 @@ func (n TokenNode) String() string {
 	return fmt.Sprint(n.Tokens)
 }
 
-// PrintTree returns a string representing the structure of TokenNode n and its children.
-// This function traverses the tree iteratively in depth-first order
-func (n TokenNode) PrintTree() string {
+// PrintNode returns a string representing the structure of TokenNode n and its children.
+// This function traverses the node iteratively in depth-first order
+func (n TokenNode) PrintNode() string {
 	builder := strings.Builder{}
 
 	visited := []string{}
@@ -101,7 +101,7 @@ func (n TokenNode) PrintTree() string {
 	return builder.String()
 }
 
-// TraverseTokenNode represents a TokenNode for tree traveral
+// TraverseTokenNode represents a TokenNode for node traveral
 type TraverseTokenNode struct {
 	Node    *TokenNode
 	Visited bool
