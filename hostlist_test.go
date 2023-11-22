@@ -84,12 +84,12 @@ var ExpandHostlistTestcases = []ExpandHostlistTestcase{
 	{
 		HostlistExpression: "host-[ 001-004,a]",
 		ExpectedResult:     nil,
-		ExpectedError:      expand.ErrInvalidToken{' ', 7},
+		ExpectedError:      expand.ErrInvalidToken{Token: ' ', Position: 7},
 	},
 	{
 		HostlistExpression: "hos]t-[1-4]",
 		ExpectedResult:     nil,
-		ExpectedError:      expand.ErrInvalidToken{']', 4},
+		ExpectedError:      expand.ErrInvalidToken{Token: ']', Position: 4},
 	},
 	{
 		HostlistExpression: "host-[1-4",
