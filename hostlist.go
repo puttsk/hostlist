@@ -3,19 +3,18 @@
 package hostlist
 
 import (
-	"fmt"
 	"slices"
 
 	"github.com/puttsk/hostlist/compress"
 	"github.com/puttsk/hostlist/expand"
 )
 
-// ExpandHostlist expands hostnames from hostlist expression and return an array of hostnames.
+// Expand expands hostnames from hostlist expression and return an array of hostnames.
 //
 // For example:
 //
 //	`host-[001-003]` will be converted to `["host-001", "host-002", "host-003"]`
-func ExpandHostlist(expression string) ([]string, error) {
+func Expand(expression string) ([]string, error) {
 	hostlist := []string{}
 
 	if expression == "" {
@@ -38,15 +37,14 @@ func ExpandHostlist(expression string) ([]string, error) {
 	return hostlist, nil
 }
 
-// CompressHostlist return hostlist expression from a list of host
-func CompressHostlist(hosts []string) (string, error) {
+// Compress return hostlist expression from a list of host
+func Compress(hosts []string) (string, error) {
 	tree := compress.NewHostlistExpressionTree()
-
 	slices.Sort(hosts)
 
 	for _, h := range hosts {
 		tree.AddHost(h)
 	}
 
-	return fmt.Sprint(tree), nil
+	return tree.GetExpression(), nil
 }

@@ -2,15 +2,15 @@ package compress
 
 // HostlistExpressionTree represents a syntax tree of a hostlist expression
 type HostlistExpressionTree struct {
-	Root   *TokenNode
-	Leaves [][]*TokenNode // [level][]Token
+	Root *TokenNode
+	//Leaves [][]*TokenNode // [level][]Token
 }
 
 // NewHostlistExpressionTree initializes and return a new HostlistExpressionTree
 func NewHostlistExpressionTree() *HostlistExpressionTree {
 	return &HostlistExpressionTree{
-		Root:   NewTokenNode(NewToken(RootToken)),
-		Leaves: [][]*TokenNode{},
+		Root: NewTokenNode(NewToken(RootToken)),
+		//Leaves: [][]*TokenNode{},
 	}
 }
 
@@ -19,10 +19,10 @@ func (t *HostlistExpressionTree) AddHost(host string) {
 	tokens := Tokenize(host)
 
 	head := t.Root
-	for i, token := range tokens {
+	for _, token := range tokens {
 		found := false
 		for j, child := range head.Children {
-			if child.GetToken() == token {
+			if child.Token == token {
 				found = true
 				head = head.Children[j]
 			}
@@ -34,12 +34,12 @@ func (t *HostlistExpressionTree) AddHost(host string) {
 			node.Level = head.Level + 1
 			head.Children = append(head.Children, node)
 			head = head.Children[len(head.Children)-1]
-			if len(t.Leaves) < (head.Level + 1) {
-				t.Leaves = append(t.Leaves, []*TokenNode{})
-			}
-			t.Leaves[i] = append(t.Leaves[i], head)
 		}
 	}
+}
+
+func (t HostlistExpressionTree) GetExpression() string {
+	return t.Root.GetExpression()
 }
 
 func (t HostlistExpressionTree) String() string {
